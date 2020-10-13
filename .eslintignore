@@ -1,0 +1,5 @@
+/.next
+/node_modules
+.eslintrc.js
+prettier.config.js
+jest.config.js

@@ -1,0 +1,25 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  height: 100%;
+  overflow: hidden;
+}
+
+#__next {
+  height: 100%;
+}
+
+button {
+  color: unset;
+}
+
+input,
+textarea {
+  font-family: Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
