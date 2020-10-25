@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { Button, TextField } from '@material-ui/core'
 import { DiceRoll } from '../types'
-import { validateEventName, validateRoll } from '../util/validateEvent'
+import { validateEventName, validateRoll, validateRolls } from '../util/validateEvent'
 import getServerUrl from '../util/serverUrl'
 import GoBackWrapper from '../components/goBackWrapper'
+import { useRouter } from 'next/router'
 
-export default function CreatePrediction() {
+export default function CreateEvent() {
+  const router = useRouter()
   const [name, setName] = useState('')
   const [rolls, setRolls] = useState<DiceRoll[]>([])
 
@@ -16,13 +18,13 @@ export default function CreatePrediction() {
   const [error, setError] = useState(false)
 
   const onCreate = async () => {
-    if (!validateEventName(name) || !rolls.every((p) => validateRoll(p))) {
+    if (!validateEventName(name) || !validateRolls(rolls)) {
       setShowValidationError(true)
       return
     }
     setIsPosting(true)
     try {
-      const response = await fetch(`${getServerUrl()}/api/v1/prediction`, {
+      const response = await fetch(`${getServerUrl()}/api/create`, {
         method: 'PUT',
         body: JSON.stringify({
           name,
@@ -32,7 +34,8 @@ export default function CreatePrediction() {
       })
 
       if (response.status < 400) {
-        // TODO go to page
+        const body = await response.text()
+        void router.push('/[id]', `/${body}`)
       } else {
         setError(true)
       }
@@ -51,7 +54,15 @@ export default function CreatePrediction() {
   }
 
   return (
-    <GoBackWrapper>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        alignItems: 'center',
+        padding: '20px',
+      }}
+    >
       <div
         style={{
           display: 'flex',
@@ -138,9 +149,9 @@ export default function CreatePrediction() {
           variant="outlined"
           style={{ marginTop: '20px' }}
         >
-          Create prediction
+          Create event
         </Button>
       </div>
-    </GoBackWrapper>
+    </div>
   )
 }

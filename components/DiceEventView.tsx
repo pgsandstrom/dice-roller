@@ -5,5 +5,5 @@ interface DiceEventProps {
 }
 
 export default function DiceEventView({ diceEvent }: DiceEventProps) {
-  return <div>{diceEvent.hash}</div>
+  return <div>{diceEvent.id}</div>
 }

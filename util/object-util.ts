@@ -1,5 +1,4 @@
-import _ from 'lodash'
-import { Dictionary, PartialDict } from '../shared'
+import { Dictionary, PartialDict } from '../types'
 
 /**
  * Traverses the input data and changes all null values to undefined

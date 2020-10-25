@@ -1,5 +1,6 @@
 export interface DiceEvent {
-  hash: string
+  id: string
+  name: string
   created: string
   raw: DiceEventJson
 }
@@ -15,7 +16,7 @@ export interface DiceRoll {
 
 export interface EventParticipant {
   hash: string
-  event_hash: string
+  event_id: string
   created: string
   raw: number[]
 }
