@@ -1,0 +1,8 @@
+{
+  "database": {
+    "host": "138.197.184.62",
+    "user": "postgres",
+    "database": "dice-roll-cool",
+    "password": "Jw7AacJLjXjReQrOtdL9XRSYb454Asw7"
+  }
+}
