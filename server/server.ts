@@ -4,7 +4,7 @@ import { DiceEvent, DiceRoll } from '../types'
 
 export const getDiceEvent = async (id: string) => {
   const diceEvent = await querySingle<DiceEvent>(
-    SQL`SELECT id, name, raw FROM dice_event WHERE id = ${id}`,
+    SQL`SELECT id, name, rolls FROM dice_event WHERE id = ${id}`,
   )
   console.log(`plox: ${id}, ${JSON.stringify(diceEvent)}`)
   return diceEvent
@@ -18,7 +18,7 @@ export const createDiceEvent = async (name: string, rolls: DiceRoll[]) => {
   }
 
   await query(
-    SQL`INSERT INTO dice_event(id, name, raw) VALUES(${id}, ${name}, ${JSON.stringify(rolls)}) `,
+    SQL`INSERT INTO dice_event(id, name, rolls) VALUES(${id}, ${name}, ${JSON.stringify(rolls)}) `,
   )
   return id
 }

@@ -2,10 +2,6 @@ export interface DiceEvent {
   id: string
   name: string
   created: string
-  raw: DiceEventJson
-}
-
-export interface DiceEventJson {
   rolls: DiceRoll[]
 }
 
@@ -18,7 +14,7 @@ export interface EventParticipant {
   hash: string
   event_id: string
   created: string
-  raw: number[]
+  rolls: number[]
 }
 
 export type Dictionary<K extends string | number | symbol, V> = { [key in K]: V }
