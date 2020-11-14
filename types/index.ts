@@ -11,10 +11,31 @@ export interface DiceRoll {
 }
 
 export interface EventParticipant {
-  hash: string
+  id: string
   event_id: string
   created: string
-  rolls: number[]
+  complete: boolean
+  rolls: EventParticipantRollIncomplete[] | EventParticipantRollComplete[]
+}
+
+export interface EventParticipantIncomplete extends EventParticipant {
+  complete: false
+  rolls: EventParticipantRollIncomplete[]
+}
+
+export interface EventParticipantRollIncomplete {
+  hash: string
+}
+
+export interface EventParticipantComplete extends EventParticipant {
+  complete: true
+  rolls: EventParticipantRollComplete[]
+}
+
+export interface EventParticipantRollComplete {
+  hash: string
+  seed: string
+  result: number
 }
 
 export type Dictionary<K extends string | number | symbol, V> = { [key in K]: V }

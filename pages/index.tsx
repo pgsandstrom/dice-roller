@@ -24,7 +24,7 @@ export default function CreateEvent() {
     }
     setIsPosting(true)
     try {
-      const response = await fetch(`${getServerUrl()}/api/create`, {
+      const response = await fetch(`${getServerUrl()}/api/event/create`, {
         method: 'PUT',
         body: JSON.stringify({
           name,

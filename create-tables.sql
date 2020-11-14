@@ -9,8 +9,9 @@ CREATE TABLE dice_event (
 );
 
 CREATE TABLE event_participant (
-	hash        TEXT PRIMARY KEY,
+	id          TEXT PRIMARY KEY,
 	event_id    TEXT NOT NULL,
 	created     TIMESTAMP NOT NULL DEFAULT now(),
+	complete    BOOLEAN NOT NULL,
 	rolls       JSONB
 );
