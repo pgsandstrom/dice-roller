@@ -27,8 +27,8 @@ export default function CreateEvent() {
       const response = await fetch(`${getServerUrl()}/api/event/create`, {
         method: 'PUT',
         body: JSON.stringify({
-          name,
-          rolls,
+          name: name.trim(),
+          rolls: rolls.map((roll) => ({ ...roll, name: roll.name.trim() })),
         }),
         credentials: 'same-origin',
       })
