@@ -13,12 +13,14 @@ export interface DiceRoll {
 export interface EventParticipant {
   id: string
   event_id: string
+  name?: string
   created: string
   complete: boolean
   rolls: EventParticipantRollIncomplete[] | EventParticipantRollComplete[]
 }
 
 export interface EventParticipantIncomplete extends EventParticipant {
+  name: undefined
   complete: false
   rolls: EventParticipantRollIncomplete[]
 }
@@ -28,6 +30,7 @@ export interface EventParticipantRollIncomplete {
 }
 
 export interface EventParticipantComplete extends EventParticipant {
+  name: string
   complete: true
   rolls: EventParticipantRollComplete[]
 }

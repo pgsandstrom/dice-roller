@@ -43,7 +43,7 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
         {participantComplete.map((participant) => {
           return (
             <div key={participant.id} style={{ display: 'flex' }}>
-              <div style={{ flex: '1 0 0' }}>My name</div>
+              <div style={{ flex: '1 0 0' }}>{participant.name}</div>
               {participant.rolls.map((roll) => {
                 return (
                   <div key={roll.hash} style={{ flex: '1 0 0' }}>

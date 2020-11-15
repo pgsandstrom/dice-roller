@@ -11,6 +11,7 @@ CREATE TABLE dice_event (
 CREATE TABLE event_participant (
 	id          TEXT PRIMARY KEY,
 	event_id    TEXT NOT NULL,
+  name        TEXT,
 	created     TIMESTAMP NOT NULL DEFAULT now(),
 	complete    BOOLEAN NOT NULL,
 	rolls       JSONB

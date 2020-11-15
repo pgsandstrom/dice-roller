@@ -8,6 +8,7 @@ import {
   EventParticipantRollIncomplete,
 } from '../types'
 import getServerUrl from '../util/serverUrl'
+import { validateParticipantName } from '../util/validateEvent'
 
 interface ParticipateViewProps {
   diceEvent: DiceEvent
@@ -19,10 +20,11 @@ export default function ParticipateView({ diceEvent, close }: ParticipateViewPro
     EventParticipantIncomplete
   >()
   const [error, setError] = useState(false)
-
   const [seeds, setSeeds] = useState<string[]>(() => {
     return diceEvent.rolls.map(() => uuidv4())
   })
+  const [name, setName] = useState('')
+  const [showValidationError, setShowValidationError] = useState(false)
 
   const createParticipation = useCallback(async () => {
     try {
@@ -50,11 +52,16 @@ export default function ParticipateView({ diceEvent, close }: ParticipateViewPro
   }, [createParticipation])
 
   const finishParticipation = async () => {
+    if (!validateParticipantName(name)) {
+      setShowValidationError(true)
+      return
+    }
     try {
       const response = await fetch(`${getServerUrl()}/api/participant/finish`, {
         method: 'PUT',
         body: JSON.stringify({
           id: eventParticipantIncomplete!.id,
+          name: name.trim(),
           seeds,
         }),
         credentials: 'same-origin',
@@ -81,9 +88,16 @@ export default function ParticipateView({ diceEvent, close }: ParticipateViewPro
   return (
     <div>
       <div>
-        Ok now you can participate! You can just click &apos;roll&apos; below, or you can keep
-        reading if you are untrusting or curious
+        Ok now you can participate! You can just enter your name and click &apos;roll&apos; below,
+        or you can keep reading if you are untrusting or curious.
       </div>
+      <TextField
+        label="Name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        error={showValidationError && !validateParticipantName(name)}
+        style={{ width: '100%' }}
+      />
       <Button
         variant="outlined"
         onClick={() => finishParticipation()}

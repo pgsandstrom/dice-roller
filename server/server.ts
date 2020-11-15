@@ -8,7 +8,13 @@ import {
   EventParticipantRollIncomplete,
 } from '../types'
 import { sha256 } from '../util/hash-util'
-import { validateEventName, validateEventParticipant, validateRolls } from '../util/validateEvent'
+import {
+  validateEventName,
+  validateEventParticipant,
+  validateParticipantName,
+  validateRolls,
+  validateSeeds,
+} from '../util/validateEvent'
 
 export const getDiceEvent = async (id: string) => {
   const diceEvent = await querySingle<DiceEvent>(
@@ -91,12 +97,12 @@ const getParticipantIncomplete = async (
 
 export const getParticipantComplete = async (eventId: string) => {
   const queryResult = await query<EventParticipantComplete>(
-    SQL`SELECT id, event_id, complete, rolls FROM event_participant WHERE event_id = ${eventId} AND complete IS TRUE`,
+    SQL`SELECT id, event_id, name, complete, rolls FROM event_participant WHERE event_id = ${eventId} AND complete IS TRUE`,
   )
   return queryResult.rows
 }
 
-export const finishParticipant = async (id: string, seeds: string[]) => {
+export const finishParticipant = async (id: string, name: string, seeds: string[]) => {
   const participantIncomplete: EventParticipantIncomplete = await getParticipantIncomplete(
     id,
     false,
@@ -107,8 +113,17 @@ export const finishParticipant = async (id: string, seeds: string[]) => {
     throw new Error(`did not find event: ${participantIncomplete.event_id}`)
   }
 
+  if (!validateParticipantName(name)) {
+    throw new Error(`invalid name: ${name}`)
+  }
+
+  if (!validateSeeds(seeds)) {
+    throw new Error(`invalid seeds: ${JSON.stringify(seeds)}`)
+  }
+
   const participantComplete: EventParticipantComplete = {
     ...participantIncomplete,
+    name,
     complete: true,
     rolls: participantIncomplete.rolls.map((roll, index) => {
       const seed = seeds[index]
@@ -122,9 +137,9 @@ export const finishParticipant = async (id: string, seeds: string[]) => {
   }
 
   await query(
-    SQL`UPDATE event_participant SET rolls = ${JSON.stringify(
-      participantComplete.rolls,
-    )}, complete = TRUE WHERE id = ${id}`,
+    SQL`UPDATE event_participant SET rolls = ${JSON.stringify(participantComplete.rolls)}, name = ${
+      participantComplete.name
+    },complete = TRUE WHERE id = ${participantComplete.id}`,
   )
 }
 
