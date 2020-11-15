@@ -1,13 +1,14 @@
 import { Button, Dialog, Typography } from '@material-ui/core'
 import React, { useState } from 'react'
-import { DiceEvent } from '../types'
+import { DiceEvent, EventParticipantComplete } from '../types'
 import ParticipateView from './ParticipateView'
 
 interface DiceEventProps {
   diceEvent: DiceEvent
+  participantComplete: EventParticipantComplete[]
 }
 
-export default function DiceEventView({ diceEvent }: DiceEventProps) {
+export default function DiceEventView({ diceEvent, participantComplete }: DiceEventProps) {
   const [showParticipationDialog, setShowParticipationDialog] = useState(false)
 
   const closeAndRefresh = () => {
@@ -19,18 +20,41 @@ export default function DiceEventView({ diceEvent }: DiceEventProps) {
   return (
     <div>
       <Typography variant="h6">{diceEvent.name}</Typography>
-      {diceEvent.rolls.map((roll, index) => {
-        return (
-          <div key={index}>
+      <div>
+        <div style={{ display: 'flex' }}>
+          <div style={{ flex: '1 0 0' }}>
             <Typography variant="subtitle1" style={{ display: 'inline' }}>
-              {roll.name}
-            </Typography>
-            <Typography variant="subtitle2" style={{ display: 'inline' }}>
-              {roll.sides}
+              Name
             </Typography>
           </div>
-        )
-      })}
+          {diceEvent.rolls.map((roll, index) => {
+            return (
+              <div key={index} style={{ flex: '1 0 0' }}>
+                <Typography variant="subtitle1" style={{ display: 'inline' }}>
+                  {roll.name}
+                </Typography>
+                <Typography variant="subtitle2" style={{ display: 'inline', paddingLeft: '5px' }}>
+                  ({roll.sides} sides)
+                </Typography>
+              </div>
+            )
+          })}
+        </div>
+        {participantComplete.map((participant) => {
+          return (
+            <div key={participant.id} style={{ display: 'flex' }}>
+              <div style={{ flex: '1 0 0' }}>My name</div>
+              {participant.rolls.map((roll) => {
+                return (
+                  <div key={roll.hash} style={{ flex: '1 0 0' }}>
+                    {roll.result}
+                  </div>
+                )
+              })}
+            </div>
+          )
+        })}
+      </div>
       <Button
         variant="outlined"
         onClick={() => setShowParticipationDialog(true)}
@@ -46,6 +70,7 @@ export default function DiceEventView({ diceEvent }: DiceEventProps) {
           <ParticipateView diceEvent={diceEvent} close={closeAndRefresh} />
         </div>
       </Dialog>
+      <style jsx>{``}</style>
     </div>
   )
 }

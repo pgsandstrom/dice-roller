@@ -8,6 +8,7 @@ import {
   EventParticipantRollIncomplete,
 } from '../types'
 import { sha256 } from '../util/hash-util'
+import { validateEventParticipant } from '../util/validateEvent'
 
 export const getDiceEvent = async (id: string) => {
   const diceEvent = await querySingle<DiceEvent>(
@@ -63,6 +64,13 @@ const getParticipantIncomplete = async (
   if (!eventParticipantIncomplete) {
     throw new Error(`could not find event participant ${id}`)
   }
+
+  if (!validateEventParticipant(eventParticipantIncomplete)) {
+    throw new Error(
+      `eventParticipantIncomplete failed validation: ${JSON.stringify(eventParticipantIncomplete)}`,
+    )
+  }
+
   return {
     ...eventParticipantIncomplete,
     rolls: eventParticipantIncomplete.rolls.map((roll) => {
@@ -71,6 +79,13 @@ const getParticipantIncomplete = async (
       }
     }),
   }
+}
+
+export const getParticipantComplete = async (eventId: string) => {
+  const queryResult = await query<EventParticipantComplete>(
+    SQL`SELECT id, event_id, complete, rolls FROM event_participant WHERE event_id = ${eventId} AND complete IS TRUE`,
+  )
+  return queryResult.rows
 }
 
 export const finishParticipant = async (id: string, seeds: string[]) => {
@@ -100,8 +115,8 @@ export const finishParticipant = async (id: string, seeds: string[]) => {
 
   await query(
     SQL`UPDATE event_participant SET rolls = ${JSON.stringify(
-      participantComplete,
-    )} WHERE id = ${id}`,
+      participantComplete.rolls,
+    )}, complete = TRUE WHERE id = ${id}`,
   )
 }
 
