@@ -8,7 +8,7 @@ import {
   EventParticipantRollIncomplete,
 } from '../types'
 import { sha256 } from '../util/hash-util'
-import { validateEventParticipant } from '../util/validateEvent'
+import { validateEventName, validateEventParticipant, validateRolls } from '../util/validateEvent'
 
 export const getDiceEvent = async (id: string) => {
   const diceEvent = await querySingle<DiceEvent>(
@@ -22,6 +22,14 @@ export const createDiceEvent = async (name: string, rolls: DiceRoll[]) => {
   if ((await getDiceEvent(id)) !== undefined) {
     const short_uuid = uuidv4().split('-')[0]
     id = `${id}-${short_uuid}`
+  }
+
+  if (!validateEventName(name)) {
+    throw new Error('invalid name')
+  }
+
+  if (!validateRolls(rolls)) {
+    throw new Error('invalid rolls')
   }
 
   await query(
