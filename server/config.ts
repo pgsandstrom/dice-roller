@@ -2,7 +2,7 @@ import fs from 'fs'
 
 import { isProdServer, isTestServer } from './env'
 
-const dbconfigPath = '/apps/dice-roll-cool/config.json'
+const dbconfigPath = '/apps/dice/config.json'
 const dbconfigDevPath = 'config.dev.json'
 
 interface MyConfig {
