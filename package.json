@@ -9,7 +9,8 @@
     "lint": "node ./node_modules/eslint/bin/eslint.js --ext .ts --ext .tsx --fix .",
     "pre-commit": "lint-staged",
     "pre-push": "npm run lint && npm run typecheck",
-    "start": "next start",
+    "//": "TODO its kind of stupid to store the port right here in the start command",
+    "start": "next start -p 8100",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
