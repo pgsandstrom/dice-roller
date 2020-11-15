@@ -11,11 +11,11 @@ npm install --only=prod
 
 npm run build
 
-mkdir -p /apps/dice-roller-cool
+mkdir -p /apps/dice
 
 # currently we copy the whole project into the prod folder
 # TODO find out exactly which parts are required, and only copy in those
-rsync -a . /apps/dice-roller-cool
+rsync -a . /apps/dice
 
 # find a neat solution to not only restart pm2, but to add if it is not already there
-pm2 restart dice-roller-cool
+pm2 restart dice
