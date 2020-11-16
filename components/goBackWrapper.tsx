@@ -12,6 +12,7 @@ export default function GoBackWrapper({ children }: GoBackWrapperProps) {
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
+        // align-items makes my very wide css-grids be placed outside the screen in DiceEventView for some reason...
         alignItems: 'center',
         padding: '20px',
       }}
