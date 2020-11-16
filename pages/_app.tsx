@@ -1,11 +1,27 @@
+import React from 'react'
 import Head from 'next/head'
-import type { AppProps } from 'next/app'
+import { AppProps } from 'next/app'
+import { ThemeProvider } from '@material-ui/core/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import theme from '../styles/theme'
+
 import '../styles/globals.css'
 
-function MyApp({ Component, pageProps }: AppProps) {
+export default function MyApp({ Component, pageProps }: AppProps) {
+  // this hook is part of making material-ui work with nextjs
+  React.useEffect(() => {
+    // Remove the server-side injected CSS.
+    const jssStyles = document.querySelector('#jss-server-side')
+    if (jssStyles) {
+      jssStyles.parentElement!.removeChild(jssStyles)
+    }
+  }, [])
+
   return (
-    <>
+    <React.Fragment>
       <Head>
+        <title>Nopestradamus</title>
+
         {/* make it work on mobile */}
         <meta name="viewport" content="width=device-width, user-scalable=no"></meta>
 
@@ -18,9 +34,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="msapplication-TileColor" content="#ffc40d" />
         <meta name="theme-color" content="#ffffff" />
       </Head>
-      <Component {...pageProps} />
-    </>
+      <ThemeProvider theme={theme}>
+        {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+        <CssBaseline />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </React.Fragment>
   )
 }
-
-export default MyApp
