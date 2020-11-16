@@ -16,7 +16,7 @@ export default function GoBackWrapper({ children }: GoBackWrapperProps) {
         padding: '20px',
       }}
     >
-      <div style={{ maxWidth: '600px', width: '100%' }}>
+      <div>
         <Link href="/">
           <Button variant="outlined" style={{ marginBottom: '20px' }}>
             Go Back

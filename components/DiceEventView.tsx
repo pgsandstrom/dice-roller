@@ -21,32 +21,26 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
     <div>
       <Typography variant="h6">{diceEvent.name}</Typography>
       <div>
-        <div style={{ display: 'flex' }}>
-          <div style={{ flex: '1 0 0' }}>
-            <Typography variant="subtitle1" style={{ display: 'inline' }}>
-              Name
-            </Typography>
+        <div className="row">
+          <div className="row-item">
+            <Typography variant="subtitle1">Name</Typography>
           </div>
           {diceEvent.rolls.map((roll, index) => {
             return (
-              <div key={index} style={{ flex: '1 0 0' }}>
-                <Typography variant="subtitle1" style={{ display: 'inline' }}>
-                  {roll.name}
-                </Typography>
-                <Typography variant="subtitle2" style={{ display: 'inline', paddingLeft: '5px' }}>
-                  ({roll.sides} sides)
-                </Typography>
+              <div key={index} className="row-item">
+                <Typography variant="subtitle1">{roll.name}</Typography>
+                <Typography variant="subtitle2">({roll.sides} sides)</Typography>
               </div>
             )
           })}
         </div>
         {participantComplete.map((participant) => {
           return (
-            <div key={participant.id} style={{ display: 'flex' }}>
-              <div style={{ flex: '1 0 0' }}>{participant.name}</div>
+            <div key={participant.id} className="row">
+              <div className="row-item">{participant.name}</div>
               {participant.rolls.map((roll) => {
                 return (
-                  <div key={roll.hash} style={{ flex: '1 0 0' }}>
+                  <div key={roll.hash} className="row-item">
                     {roll.result}
                   </div>
                 )
@@ -66,11 +60,20 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
         open={showParticipationDialog}
         onBackdropClick={() => setShowParticipationDialog(false)}
       >
-        <div style={{ width: '600px', padding: '50px' }}>
+        <div style={{ width: '100%', maxWidth: '1200px', padding: '50px' }}>
           <ParticipateView diceEvent={diceEvent} close={closeAndRefresh} />
         </div>
       </Dialog>
-      <style jsx>{``}</style>
+      <style jsx>{`
+        .row {
+          display: flex;
+        }
+        .row-item {
+          flex: 1 0 160px;
+          border-left: 1px solid black;
+          padding: 10px;
+        }
+      `}</style>
     </div>
   )
 }

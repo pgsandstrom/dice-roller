@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 export default function CreateEvent() {
   const router = useRouter()
   const [name, setName] = useState('')
-  const [rolls, setRolls] = useState<DiceRoll[]>([])
+  const [rolls, setRolls] = useState<DiceRoll[]>([{ name: '', sides: 10 }])
 
   const [showValidationError, setShowValidationError] = useState(false)
 
@@ -67,12 +67,12 @@ export default function CreateEvent() {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          maxWidth: '400px',
+          maxWidth: '600px',
           width: '100%',
         }}
       >
         <TextField
-          label="Name"
+          label="Event name"
           multiline
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -82,14 +82,15 @@ export default function CreateEvent() {
         />
         <div
           style={{
-            margin: '20px 10px',
+            margin: '20px 0px',
           }}
         >
           {rolls.map((roll, index) => {
             return (
               <div key={index} style={{ display: 'flex', alignItems: 'center', marginTop: '10px' }}>
                 <TextField
-                  label="Roll name"
+                  label="Dice roll name"
+                  multiline
                   value={roll.name}
                   onChange={(e) => {
                     setRolls(
@@ -100,7 +101,7 @@ export default function CreateEvent() {
                   }}
                   error={showValidationError && !validateRoll(roll)}
                   helperText={showValidationError && !validateRoll(roll) ? 'Invalid roll' : ''}
-                  style={{ flex: '1 0 0' }}
+                  style={{ flex: '1 0 0', paddingRight: '10px' }}
                 />
 
                 <TextField
@@ -117,6 +118,7 @@ export default function CreateEvent() {
                     )
                   }}
                   value={roll.sides}
+                  style={{ width: '100px' }}
                 />
                 <Button
                   onClick={() =>
