@@ -1,7 +1,7 @@
 import { DiceRoll, EventParticipant, EventParticipantRollIncomplete } from '../types'
 
 export const validateEventName = (title?: string): boolean => {
-  return title !== undefined && title.trim() === title && title.length > 0 && title.length < 200
+  return title !== undefined && title.length > 0 && title.length < 200
 }
 
 export const validateRolls = (rolls: DiceRoll[] | undefined): boolean => {
@@ -9,7 +9,7 @@ export const validateRolls = (rolls: DiceRoll[] | undefined): boolean => {
 }
 
 export const validateParticipantName = (name?: string): boolean => {
-  return name !== undefined && name.trim() === name && name.length > 0 && name.length < 200
+  return name !== undefined && name.length > 0 && name.length < 200
 }
 
 export const validateSeeds = (seeds: Array<string | undefined>): boolean => {
@@ -19,7 +19,6 @@ export const validateSeeds = (seeds: Array<string | undefined>): boolean => {
 export const validateRoll = (roll: Partial<DiceRoll>): boolean => {
   return (
     roll.name !== undefined &&
-    roll.name.trim() === roll.name &&
     roll.name.length > 0 &&
     roll.name.length < 500 &&
     roll.sides !== undefined &&

@@ -23,7 +23,12 @@ export const getDiceEvent = async (id: string) => {
   return diceEvent
 }
 
-export const createDiceEvent = async (name: string, rolls: DiceRoll[]) => {
+export const createDiceEvent = async (nameRaw: string, rollsRaw: DiceRoll[]) => {
+  const name = nameRaw.trim()
+  const rolls = rollsRaw.map<DiceRoll>((roll) => ({
+    ...roll,
+    name: roll.name.trim(),
+  }))
   let id = getDiceEventBasicId(name)
   if ((await getDiceEvent(id)) !== undefined) {
     const short_uuid = uuidv4().split('-')[0]
@@ -123,7 +128,7 @@ export const finishParticipant = async (id: string, name: string, seeds: string[
 
   const participantComplete: EventParticipantComplete = {
     ...participantIncomplete,
-    name,
+    name: name.trim(),
     complete: true,
     rolls: participantIncomplete.rolls.map((roll, index) => {
       const seed = seeds[index]
