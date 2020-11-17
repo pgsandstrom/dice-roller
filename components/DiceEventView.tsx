@@ -65,9 +65,11 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
         </div>
       </Dialog>
       <style jsx>{`
+        .container {
+        }
         .grid-container {
           overflow-x: auto;
-          max-width: 100vw;
+          max-width: calc(100vw - 40px);
           background: black;
         }
         .grid {
@@ -79,7 +81,7 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
           background: white;
           padding: 10px;
           min-width: 200px;
-          // max-width: 500px;
+          max-width: 500px;
         }
       `}</style>
     </div>
