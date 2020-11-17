@@ -18,34 +18,36 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
   }
 
   return (
-    <div>
+    <div className="container">
       <Typography variant="h6">{diceEvent.name}</Typography>
-      <div className="grid">
-        <div className="grid-item top-row">
-          <Typography variant="subtitle1">Name</Typography>
+      <div className="grid-container">
+        <div className="grid">
+          <div className="grid-item top-row">
+            <Typography variant="subtitle1">Name</Typography>
+          </div>
+          {diceEvent.rolls.map((roll, index) => {
+            return (
+              <div key={index} className="grid-item top-row">
+                <Typography variant="subtitle1">{roll.name}</Typography>
+                <Typography variant="subtitle2">({roll.sides} sides)</Typography>
+              </div>
+            )
+          })}
+          {participantComplete.map((participant) => {
+            return (
+              <>
+                <div className="grid-item">{participant.name}</div>
+                {participant.rolls.map((roll) => {
+                  return (
+                    <div key={roll.hash} className="grid-item">
+                      {roll.result}
+                    </div>
+                  )
+                })}
+              </>
+            )
+          })}
         </div>
-        {diceEvent.rolls.map((roll, index) => {
-          return (
-            <div key={index} className="grid-item top-row">
-              <Typography variant="subtitle1">{roll.name}</Typography>
-              <Typography variant="subtitle2">({roll.sides} sides)</Typography>
-            </div>
-          )
-        })}
-        {participantComplete.map((participant) => {
-          return (
-            <>
-              <div className="grid-item">{participant.name}</div>
-              {participant.rolls.map((roll) => {
-                return (
-                  <div key={roll.hash} className="grid-item">
-                    {roll.result}
-                  </div>
-                )
-              })}
-            </>
-          )
-        })}
       </div>
       <Button
         variant="outlined"
@@ -63,17 +65,21 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
         </div>
       </Dialog>
       <style jsx>{`
+        .grid-container {
+          overflow-x: auto;
+          max-width: 100vw;
+          background: black;
+        }
         .grid {
           display: grid;
           grid-template-columns: repeat(${diceEvent.rolls.length + 1}, auto [col-start]);
           gap: 2px;
-          background: black;
         }
         .grid-item {
           background: white;
           padding: 10px;
           min-width: 200px;
-          max-width: 500px;
+          // max-width: 500px;
         }
       `}</style>
     </div>
