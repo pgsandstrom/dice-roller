@@ -117,7 +117,15 @@ export default function ParticipateView({ diceEvent, close }: ParticipateViewPro
           Here you can alter the seed that will be used in combination with the servers seed to
           generate your dice rolls. You can see a fingerprint, which is the sha256 hash of the
           servers seed. The servers seed can be seen on the event after you have made your roll. The
-          exact code for generating your dice roll can be seen <a href="TODO">here</a>
+          exact code for generating your dice roll can be seen{' '}
+          <a
+            href="https://github.com/pgsandstrom/dice-roller/blob/main/server/roll.ts"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            here
+          </a>
+          .
         </div>
         <div>
           {diceEvent.rolls.map((roll, index) => {
