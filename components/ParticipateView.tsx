@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid'
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
-import { Button, TextField, Typography } from '@material-ui/core'
+import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp'
+import { Button, Collapse, TextField, Typography } from '@material-ui/core'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   DiceEvent,
@@ -90,7 +91,6 @@ export default function ParticipateView({ diceEvent, close }: ParticipateViewPro
 
   return (
     <div>
-      <div></div>
       <TextField
         label="Name"
         value={name}
@@ -98,51 +98,56 @@ export default function ParticipateView({ diceEvent, close }: ParticipateViewPro
         error={showValidationError && !validateParticipantName(name)}
         style={{ width: '100%' }}
       />
-      <Button
-        variant="outlined"
-        onClick={() => finishParticipation()}
-        style={{ marginTop: '20px' }}
-      >
-        Roll
-      </Button>
-      {!showNerdStuff && (
-        <>
-          <div style={{ marginTop: '20px' }}>
-            Enter your name and click &apos;roll&apos;. Or you can dig into the nerd stuff.
-          </div>
-          <Button
-            variant="contained"
-            onClick={() => setShowNerdStuff(true)}
-            style={{ marginTop: '20px' }}
-            endIcon={<ArrowDropDownIcon />}
-          >
-            Show nerd stuff
-          </Button>
-        </>
-      )}
-      {showNerdStuff && <div>Explanation</div>}
-      {showNerdStuff &&
-        diceEvent.rolls.map((roll, index) => {
-          return (
-            <RollRow
-              key={index}
-              roll={roll}
-              incompleteRoll={eventParticipantIncomplete.rolls[index]}
-              seed={seeds[index]}
-              setSeed={(newSeed: string) => {
-                setSeeds(
-                  seeds.map((seed, i) => {
-                    if (index === i) {
-                      return newSeed
-                    } else {
-                      return seed
-                    }
-                  }),
-                )
-              }}
-            />
-          )
-        })}
+      <div>
+        <Button
+          variant="outlined"
+          onClick={() => finishParticipation()}
+          style={{ marginTop: '20px' }}
+        >
+          Roll
+        </Button>
+      </div>
+      <div>
+        <Button
+          variant="contained"
+          onClick={() => setShowNerdStuff(!showNerdStuff)}
+          style={{ marginTop: '20px' }}
+          endIcon={showNerdStuff ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+        >
+          {showNerdStuff ? 'Hide' : 'Show'} nerd stuff
+        </Button>
+      </div>
+      <Collapse in={showNerdStuff}>
+        <div style={{ marginTop: '20px' }}>
+          Here you can alter the seed that will be used in combination with the servers seed to
+          generate your dice rolls. You can see a fingerprint, which is the sha256 hash of the
+          servers seed. The servers seed can be seen on the event after you have made your roll. The
+          exact code for generating your dice roll can be seen <a href="TODO">here</a>
+        </div>
+        <div>
+          {diceEvent.rolls.map((roll, index) => {
+            return (
+              <RollRow
+                key={index}
+                roll={roll}
+                incompleteRoll={eventParticipantIncomplete.rolls[index]}
+                seed={seeds[index]}
+                setSeed={(newSeed: string) => {
+                  setSeeds(
+                    seeds.map((seed, i) => {
+                      if (index === i) {
+                        return newSeed
+                      } else {
+                        return seed
+                      }
+                    }),
+                  )
+                }}
+              />
+            )
+          })}
+        </div>
+      </Collapse>
     </div>
   )
 }
