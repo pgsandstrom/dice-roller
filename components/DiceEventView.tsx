@@ -60,7 +60,7 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
         open={showParticipationDialog}
         onBackdropClick={() => setShowParticipationDialog(false)}
       >
-        <div style={{ padding: '50px' }}>
+        <div style={{ width: '600px', padding: '50px' }}>
           <ParticipateView diceEvent={diceEvent} close={closeAndRefresh} />
         </div>
       </Dialog>

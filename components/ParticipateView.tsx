@@ -1,4 +1,5 @@
 import { v4 as uuidv4 } from 'uuid'
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import { Button, TextField, Typography } from '@material-ui/core'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
@@ -25,6 +26,8 @@ export default function ParticipateView({ diceEvent, close }: ParticipateViewPro
   })
   const [name, setName] = useState('')
   const [showValidationError, setShowValidationError] = useState(false)
+
+  const [showNerdStuff, setShowNerdStuff] = useState(false)
 
   const createParticipation = useCallback(async () => {
     try {
@@ -87,10 +90,7 @@ export default function ParticipateView({ diceEvent, close }: ParticipateViewPro
 
   return (
     <div>
-      <div>
-        Ok now you can participate! You can just enter your name and click &apos;roll&apos; below,
-        or you can keep reading if you are untrusting or curious.
-      </div>
+      <div></div>
       <TextField
         label="Name"
         value={name}
@@ -105,31 +105,44 @@ export default function ParticipateView({ diceEvent, close }: ParticipateViewPro
       >
         Roll
       </Button>
-      <div>
-        If you want to, you may alter the random seeds that has been given to you for each roll:
-      </div>
-      {diceEvent.rolls.map((roll, index) => {
-        return (
-          <RollRow
-            key={index}
-            roll={roll}
-            incompleteRoll={eventParticipantIncomplete.rolls[index]}
-            seed={seeds[index]}
-            setSeed={(newSeed: string) => {
-              setSeeds(
-                seeds.map((seed, i) => {
-                  if (index === i) {
-                    return newSeed
-                  } else {
-                    return seed
-                  }
-                }),
-              )
-            }}
-          />
-        )
-      })}
-      <div>Your rolls will be decided like this: TODO</div>
+      {!showNerdStuff && (
+        <>
+          <div style={{ marginTop: '20px' }}>
+            Enter your name and click &apos;roll&apos;. Or you can dig into the nerd stuff.
+          </div>
+          <Button
+            variant="contained"
+            onClick={() => setShowNerdStuff(true)}
+            style={{ marginTop: '20px' }}
+            endIcon={<ArrowDropDownIcon />}
+          >
+            Show nerd stuff
+          </Button>
+        </>
+      )}
+      {showNerdStuff && <div>Explanation</div>}
+      {showNerdStuff &&
+        diceEvent.rolls.map((roll, index) => {
+          return (
+            <RollRow
+              key={index}
+              roll={roll}
+              incompleteRoll={eventParticipantIncomplete.rolls[index]}
+              seed={seeds[index]}
+              setSeed={(newSeed: string) => {
+                setSeeds(
+                  seeds.map((seed, i) => {
+                    if (index === i) {
+                      return newSeed
+                    } else {
+                      return seed
+                    }
+                  }),
+                )
+              }}
+            />
+          )
+        })}
     </div>
   )
 }
