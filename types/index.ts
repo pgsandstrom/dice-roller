@@ -16,7 +16,10 @@ export interface EventParticipant {
   name?: string
   created: string
   complete: boolean
-  rolls: EventParticipantRollIncomplete[] | EventParticipantRollComplete[]
+  rolls:
+    | EventParticipantRollIncomplete[]
+    | EventParticipantRollComplete[]
+    | EventParticipantRollHashed[]
 }
 
 export interface EventParticipantIncomplete extends EventParticipant {
@@ -26,7 +29,17 @@ export interface EventParticipantIncomplete extends EventParticipant {
 }
 
 export interface EventParticipantRollIncomplete {
-  hash: string
+  serverSeed: string
+}
+
+export interface EventParticipantHashed extends EventParticipant {
+  name: undefined
+  complete: false
+  rolls: EventParticipantRollHashed[]
+}
+
+export interface EventParticipantRollHashed {
+  serverSeedHash: string
 }
 
 export interface EventParticipantComplete extends EventParticipant {
@@ -36,7 +49,7 @@ export interface EventParticipantComplete extends EventParticipant {
 }
 
 export interface EventParticipantRollComplete {
-  hash: string
+  serverSeed: string
   seed: string
   result: number
 }

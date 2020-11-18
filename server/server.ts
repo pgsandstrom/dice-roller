@@ -4,6 +4,7 @@ import {
   DiceEvent,
   DiceRoll,
   EventParticipantComplete,
+  EventParticipantHashed,
   EventParticipantIncomplete,
   EventParticipantRollIncomplete,
 } from '../types'
@@ -15,6 +16,7 @@ import {
   validateRolls,
   validateSeeds,
 } from '../util/validateEvent'
+import { doRoll } from './roll'
 
 export const getDiceEvent = async (id: string) => {
   const diceEvent = await querySingle<DiceEvent>(
@@ -49,16 +51,16 @@ export const createDiceEvent = async (nameRaw: string, rollsRaw: DiceRoll[]) => 
   return id
 }
 
-export const createParticipation = async (eventId: string) => {
+export const createParticipation = async (eventId: string): Promise<EventParticipantHashed> => {
   const diceEvent = await getDiceEvent(eventId)
 
   if (!diceEvent) {
     throw new Error(`could not find event ${eventId}`)
   }
 
-  const participantRolls: EventParticipantRollIncomplete[] = diceEvent.rolls.map((roll) => {
+  const participantRolls: EventParticipantRollIncomplete[] = diceEvent.rolls.map((_roll) => {
     return {
-      hash: uuidv4(),
+      serverSeed: uuidv4(),
     }
   })
 
@@ -69,13 +71,19 @@ export const createParticipation = async (eventId: string) => {
     )}) `,
   )
 
-  return getParticipantIncomplete(id, true)
+  const eventParticipantIncomplete = await getParticipantIncomplete(id)
+
+  return {
+    ...eventParticipantIncomplete,
+    rolls: eventParticipantIncomplete.rolls.map((roll) => {
+      return {
+        serverSeedHash: sha256(roll.serverSeed),
+      }
+    }),
+  }
 }
 
-const getParticipantIncomplete = async (
-  id: string,
-  hashHashes: boolean,
-): Promise<EventParticipantIncomplete> => {
+const getParticipantIncomplete = async (id: string): Promise<EventParticipantIncomplete> => {
   const eventParticipantIncomplete = await querySingle<EventParticipantIncomplete>(
     SQL`SELECT id, event_id, complete, rolls FROM event_participant WHERE id = ${id}`,
   )
@@ -90,14 +98,7 @@ const getParticipantIncomplete = async (
     )
   }
 
-  return {
-    ...eventParticipantIncomplete,
-    rolls: eventParticipantIncomplete.rolls.map((roll) => {
-      return {
-        hash: hashHashes ? sha256(roll.hash) : roll.hash,
-      }
-    }),
-  }
+  return eventParticipantIncomplete
 }
 
 export const getParticipantComplete = async (eventId: string) => {
@@ -108,10 +109,7 @@ export const getParticipantComplete = async (eventId: string) => {
 }
 
 export const finishParticipant = async (id: string, name: string, seeds: string[]) => {
-  const participantIncomplete: EventParticipantIncomplete = await getParticipantIncomplete(
-    id,
-    false,
-  )
+  const participantIncomplete: EventParticipantIncomplete = await getParticipantIncomplete(id)
 
   const event = await getDiceEvent(participantIncomplete.event_id)
   if (!event) {
@@ -136,7 +134,7 @@ export const finishParticipant = async (id: string, name: string, seeds: string[
       return {
         ...roll,
         seed,
-        result: doRoll(roll.hash, seed, sides),
+        result: doRoll(roll.serverSeed, seed, sides),
       }
     }),
   }
@@ -146,27 +144,6 @@ export const finishParticipant = async (id: string, name: string, seeds: string[
       participantComplete.name
     },complete = TRUE WHERE id = ${participantComplete.id}`,
   )
-}
-
-const doRoll = (hash: string, seed: string, sides: number) => {
-  let str = sha256(`${hash}${seed}`)
-
-  const numberLength = `${sides}`.length
-
-  let attempts = 1
-  while (attempts < 1000) {
-    const result = new RegExp(`[0-9]{${numberLength}}`).exec(str)
-    if (result) {
-      const rollResult = parseInt(result[0], 10)
-      if (rollResult < sides) {
-        // 0 is equal to max, thats why we do this magic here:
-        return rollResult !== 0 ? rollResult : sides
-      }
-    }
-    str = sha256(str)
-    attempts += 1
-  }
-  throw new Error('Failed to do roll')
 }
 
 const getDiceEventBasicId = (name: string) => {

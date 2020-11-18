@@ -22,7 +22,7 @@ interface DiceEventProps {
   participantComplete: EventParticipantComplete[]
 }
 
-export default function DiceEventHashView({ diceEvent, participantComplete }: DiceEventProps) {
+export default function DiceEventIdView({ diceEvent, participantComplete }: DiceEventProps) {
   return (
     <GoBackWrapper>
       {diceEvent ? (

@@ -3,12 +3,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp'
 import { Button, Collapse, TextField, Typography } from '@material-ui/core'
 import React, { useCallback, useEffect, useState } from 'react'
-import {
-  DiceEvent,
-  DiceRoll,
-  EventParticipantIncomplete,
-  EventParticipantRollIncomplete,
-} from '../types'
+import { DiceEvent, DiceRoll, EventParticipantHashed, EventParticipantRollHashed } from '../types'
 import getServerUrl from '../util/serverUrl'
 import { validateParticipantName } from '../util/validateEvent'
 
@@ -19,7 +14,7 @@ interface ParticipateViewProps {
 
 export default function ParticipateView({ diceEvent, close }: ParticipateViewProps) {
   const [eventParticipantIncomplete, setEventParticipantIncomplete] = useState<
-    EventParticipantIncomplete
+    EventParticipantHashed
   >()
   const [error, setError] = useState(false)
   const [seeds, setSeeds] = useState<string[]>(() => {
@@ -41,7 +36,7 @@ export default function ParticipateView({ diceEvent, close }: ParticipateViewPro
       })
 
       if (response.status < 400) {
-        const e = (await response.json()) as EventParticipantIncomplete
+        const e = (await response.json()) as EventParticipantHashed
         setEventParticipantIncomplete(e)
       } else {
         setError(true)
@@ -153,7 +148,7 @@ export default function ParticipateView({ diceEvent, close }: ParticipateViewPro
 }
 
 interface RollRowProps {
-  incompleteRoll: EventParticipantRollIncomplete
+  incompleteRoll: EventParticipantRollHashed
   roll: DiceRoll
   seed: string
   setSeed: (s: string) => void
@@ -165,7 +160,7 @@ const RollRow = ({ incompleteRoll, roll, seed, setSeed }: RollRowProps) => {
       <Typography variant="h6">{roll.name}</Typography>
       <TextField value={seed} style={{ width: '100%' }} onChange={(e) => setSeed(e.target.value)} />
       <div>
-        <Typography variant="caption">fingerprint: {incompleteRoll.hash}</Typography>
+        <Typography variant="caption">fingerprint: {incompleteRoll.serverSeedHash}</Typography>
       </div>
     </div>
   )

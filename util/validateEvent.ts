@@ -1,4 +1,9 @@
-import { DiceRoll, EventParticipant, EventParticipantRollIncomplete } from '../types'
+import {
+  DiceRoll,
+  EventParticipantComplete,
+  EventParticipantIncomplete,
+  EventParticipantRollIncomplete,
+} from '../types'
 
 export const validateEventName = (title?: string): boolean => {
   return title !== undefined && title.length > 0 && title.length < 200
@@ -27,13 +32,15 @@ export const validateRoll = (roll: Partial<DiceRoll>): boolean => {
   )
 }
 
-export const validateEventParticipant = (eventParticipant: Partial<EventParticipant>): boolean => {
+export const validateEventParticipant = (
+  eventParticipant: Partial<EventParticipantComplete | EventParticipantIncomplete>,
+): boolean => {
   // TODO improve?
   return (
     eventParticipant.id !== undefined &&
     Array.isArray(eventParticipant.rolls) &&
     eventParticipant.rolls.every((roll: Partial<EventParticipantRollIncomplete>) => {
-      return roll.hash !== undefined
+      return roll.serverSeed !== undefined
     })
   )
 }

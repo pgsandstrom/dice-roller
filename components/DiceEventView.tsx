@@ -39,7 +39,7 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
                 <div className="grid-item">{participant.name}</div>
                 {participant.rolls.map((roll) => {
                   return (
-                    <div key={roll.hash} className="grid-item">
+                    <div key={roll.serverSeed} className="grid-item">
                       {roll.result}
                     </div>
                   )
