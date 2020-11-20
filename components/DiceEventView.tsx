@@ -1,4 +1,5 @@
-import { Button, Dialog, Typography } from '@material-ui/core'
+import { Button, Dialog, Menu, Typography } from '@material-ui/core'
+import HelpIcon from '@material-ui/icons/Help'
 import React, { useState } from 'react'
 import { DiceEvent, EventParticipantComplete } from '../types'
 import ParticipateView from './ParticipateView'
@@ -11,6 +12,9 @@ interface DiceEventProps {
 export default function DiceEventView({ diceEvent, participantComplete }: DiceEventProps) {
   const [showParticipationDialog, setShowParticipationDialog] = useState(false)
 
+  const [menuAnchorEl, setMenuAnchorEl] = useState<SVGSVGElement>()
+  const [showMenuIndex, setShowMenuIndex] = useState<number | undefined>()
+
   const closeAndRefresh = () => {
     setShowParticipationDialog(false)
     // TODO nicer reload
@@ -22,21 +26,58 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
       <Typography variant="h6">{diceEvent.name}</Typography>
       <div className="grid-container">
         <div className="grid">
-          <div className="grid-item top-row">
+          <div className="grid-item">
             <Typography variant="subtitle1">Name</Typography>
           </div>
           {diceEvent.rolls.map((roll, index) => {
             return (
-              <div key={index} className="grid-item top-row">
+              <div key={index} className="grid-item">
                 <Typography variant="subtitle1">{roll.name}</Typography>
                 <Typography variant="subtitle2">({roll.sides} sides)</Typography>
               </div>
             )
           })}
-          {participantComplete.map((participant) => {
+          {participantComplete.map((participant, index) => {
             return (
               <>
-                <div className="grid-item">{participant.name}</div>
+                <div className="grid-item" style={{ display: 'flex' }}>
+                  <span style={{ flex: '1 0 auto' }}>{participant.name}</span>
+                  <HelpIcon
+                    onClick={(event) => {
+                      setMenuAnchorEl(event.currentTarget)
+                      setShowMenuIndex(index)
+                    }}
+                    style={{ fontSize: '1em', cursor: 'pointer' }}
+                  />
+                  <Menu
+                    anchorEl={menuAnchorEl}
+                    keepMounted={true}
+                    open={index === showMenuIndex}
+                    onClose={() => {
+                      setMenuAnchorEl(undefined)
+                      setShowMenuIndex(undefined)
+                    }}
+                    anchorOrigin={{
+                      vertical: 'center',
+                      horizontal: 'right',
+                    }}
+                  >
+                    <div style={{ padding: '20px', width: '700px' }}>
+                      <div className="seed-view-row">
+                        <span>Server seed</span>
+                        <span>User seed</span>
+                      </div>
+                      {participant.rolls.map((roll) => {
+                        return (
+                          <div key={roll.serverSeed} className="seed-view-row">
+                            <span>{roll.serverSeed}</span>
+                            <span>{roll.seed}</span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </Menu>
+                </div>
                 {participant.rolls.map((roll) => {
                   return (
                     <div key={roll.serverSeed} className="grid-item">
@@ -82,6 +123,12 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
           padding: 10px;
           min-width: 200px;
           max-width: 500px;
+        }
+        .seed-view-row {
+          display: flex;
+        }
+        .seed-view-row > * {
+          flex: 1 0 0;
         }
       `}</style>
     </div>
