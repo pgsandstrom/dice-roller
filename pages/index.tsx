@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, TextField } from '@material-ui/core'
+import { Button, Checkbox, FormControlLabel, TextField, Tooltip } from '@material-ui/core'
 import { DiceRoll } from '../types'
 import { validateEventName, validateRoll, validateRolls } from '../util/validateEvent'
 import getServerUrl from '../util/serverUrl'
@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 export default function CreateEvent() {
   const router = useRouter()
   const [name, setName] = useState('')
-  const [rolls, setRolls] = useState<DiceRoll[]>([{ name: '', sides: 10 }])
+  const [rolls, setRolls] = useState<DiceRoll[]>([{ name: '', uniqueResults: true, sides: 10 }])
 
   const [showValidationError, setShowValidationError] = useState(false)
 
@@ -95,7 +95,9 @@ export default function CreateEvent() {
                   onChange={(e) => {
                     setRolls(
                       rolls.map((p, i) =>
-                        index === i ? { name: e.target.value, sides: p.sides } : p,
+                        index === i
+                          ? { name: e.target.value, uniqueResults: p.uniqueResults, sides: p.sides }
+                          : p,
                       ),
                     )
                   }}
@@ -103,6 +105,33 @@ export default function CreateEvent() {
                   helperText={showValidationError && !validateRoll(roll) ? 'Invalid roll' : ''}
                   style={{ flex: '1 0 0', paddingRight: '10px' }}
                 />
+                <Tooltip
+                  placement="bottom"
+                  title="If this is checked, dice rolling will continue when two participants have the same result"
+                >
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={roll.uniqueResults}
+                        onChange={(e) => {
+                          setRolls(
+                            rolls.map((p, i) =>
+                              index === i
+                                ? {
+                                    name: p.name,
+                                    uniqueResults: e.target.checked,
+                                    sides: p.sides,
+                                  }
+                                : p,
+                            ),
+                          )
+                        }}
+                      />
+                    }
+                    label="Unique results"
+                    style={{ marginTop: '10px' }}
+                  />
+                </Tooltip>
 
                 <TextField
                   label="Dice sides"
@@ -113,7 +142,13 @@ export default function CreateEvent() {
                   onChange={(e) => {
                     setRolls(
                       rolls.map((p, i) =>
-                        index === i ? { name: p.name, sides: parseInt(e.target.value, 10) } : p,
+                        index === i
+                          ? {
+                              name: p.name,
+                              uniqueResults: p.uniqueResults,
+                              sides: parseInt(e.target.value, 10),
+                            }
+                          : p,
                       ),
                     )
                   }}
@@ -136,7 +171,7 @@ export default function CreateEvent() {
           })}
           <div>
             <Button
-              onClick={() => setRolls([...rolls, { name: '', sides: 10 }])}
+              onClick={() => setRolls([...rolls, { name: '', uniqueResults: true, sides: 10 }])}
               variant="outlined"
               style={{ margin: '10px 0' }}
             >

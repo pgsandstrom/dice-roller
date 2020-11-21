@@ -7,6 +7,7 @@ export interface DiceEvent {
 
 export interface DiceRoll {
   name: string
+  uniqueResults: boolean
   sides: number
 }
 

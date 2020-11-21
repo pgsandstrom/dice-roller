@@ -33,7 +33,9 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
             return (
               <div key={index} className="grid-item">
                 <Typography variant="subtitle1">{roll.name}</Typography>
-                <Typography variant="subtitle2">({roll.sides} sides)</Typography>
+                <Typography variant="subtitle2">
+                  ({roll.sides} sides{roll.uniqueResults ? ', unique result' : ''})
+                </Typography>
               </div>
             )
           })}
@@ -81,12 +83,17 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
                   </Menu>
                 </div>
                 {participant.rolls.map((roll, rollIndex) => {
-                  const firstIrrelevantIndex = getFirstIrrelevantIndexLength(
-                    participant,
-                    roll,
-                    rollIndex,
-                    participantComplete,
-                  )
+                  let firstIrrelevantIndex
+                  if (diceEvent.rolls[rollIndex].uniqueResults) {
+                    firstIrrelevantIndex = getFirstIrrelevantIndexLength(
+                      participant,
+                      roll,
+                      rollIndex,
+                      participantComplete,
+                    )
+                  } else {
+                    firstIrrelevantIndex = 1
+                  }
                   const relevantResults = roll.result.slice(0, firstIrrelevantIndex)
                   return (
                     <div key={roll.serverSeed} className="grid-item">
