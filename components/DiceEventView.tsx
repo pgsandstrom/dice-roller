@@ -63,7 +63,12 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
                     }}
                   >
                     <div style={{ padding: '20px', width: '700px' }}>
-                      <div className="seed-view-row">
+                      <div className="seed-view-row" style={{ marginBottom: '5px' }}>
+                        <span>
+                          Here is the nerd stuff needed to validate that the dice rolls was fair.
+                        </span>
+                      </div>
+                      <div className="seed-view-row" style={{ marginBottom: '5px' }}>
                         <span>Server seed</span>
                         <span>User seed</span>
                       </div>
