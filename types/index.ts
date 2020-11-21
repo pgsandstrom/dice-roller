@@ -51,7 +51,7 @@ export interface EventParticipantComplete extends EventParticipant {
 export interface EventParticipantRollComplete {
   serverSeed: string
   seed: string
-  result: number
+  result: number[]
 }
 
 export type Dictionary<K extends string | number | symbol, V> = { [key in K]: V }

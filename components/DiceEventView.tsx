@@ -1,7 +1,7 @@
 import { Button, Dialog, Menu, Typography } from '@material-ui/core'
 import HelpIcon from '@material-ui/icons/Help'
-import React, { useState } from 'react'
-import { DiceEvent, EventParticipantComplete } from '../types'
+import React, { Fragment, useState } from 'react'
+import { DiceEvent, EventParticipantComplete, EventParticipantRollComplete } from '../types'
 import ParticipateView from './ParticipateView'
 
 interface DiceEventProps {
@@ -37,22 +37,22 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
               </div>
             )
           })}
-          {participantComplete.map((participant, index) => {
+          {participantComplete.map((participant, participantIndex) => {
             return (
-              <>
+              <Fragment key={participantIndex}>
                 <div className="grid-item" style={{ display: 'flex' }}>
                   <span style={{ flex: '1 0 auto' }}>{participant.name}</span>
                   <HelpIcon
                     onClick={(event) => {
                       setMenuAnchorEl(event.currentTarget)
-                      setShowMenuIndex(index)
+                      setShowMenuIndex(participantIndex)
                     }}
                     style={{ fontSize: '1em', cursor: 'pointer' }}
                   />
                   <Menu
                     anchorEl={menuAnchorEl}
                     keepMounted={true}
-                    open={index === showMenuIndex}
+                    open={participantIndex === showMenuIndex}
                     onClose={() => {
                       setMenuAnchorEl(undefined)
                       setShowMenuIndex(undefined)
@@ -83,14 +83,27 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
                     </div>
                   </Menu>
                 </div>
-                {participant.rolls.map((roll) => {
+                {participant.rolls.map((roll, rollIndex) => {
+                  const firstIrrelevantIndex = getFirstIrrelevantIndexLength(
+                    participant,
+                    roll,
+                    rollIndex,
+                    participantComplete,
+                  )
+                  const relevantResults = roll.result.slice(0, firstIrrelevantIndex)
                   return (
                     <div key={roll.serverSeed} className="grid-item">
-                      {roll.result}
+                      {relevantResults.map((r, i) => {
+                        return (
+                          <span key={i} style={{ marginRight: '10px' }}>
+                            {r} {i !== relevantResults.length - 1 ? ',' : ''}
+                          </span>
+                        )
+                      })}
                     </div>
                   )
                 })}
-              </>
+              </Fragment>
             )
           })}
         </div>
@@ -138,4 +151,27 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
       `}</style>
     </div>
   )
+}
+
+const getFirstIrrelevantIndexLength = (
+  currentParticipant: EventParticipantComplete,
+  currentRoll: EventParticipantRollComplete,
+  rollIndex: number,
+  allParticipants: EventParticipantComplete[],
+) => {
+  let relevantParticipants = allParticipants.filter((p) => p !== currentParticipant)
+  let firstIrrelevantIndex = currentRoll.result.findIndex((item, resultIndex) => {
+    relevantParticipants = relevantParticipants.filter((p) => {
+      return p.rolls[rollIndex].result[resultIndex] === item
+    })
+    return relevantParticipants.length === 0
+  })
+  if (allParticipants.length === 1) {
+    firstIrrelevantIndex = 0
+  } else if (firstIrrelevantIndex === -1) {
+    firstIrrelevantIndex = 10000
+  }
+
+  // honestly a bit unsure of why '+1' is needed here
+  return firstIrrelevantIndex + 1
 }
