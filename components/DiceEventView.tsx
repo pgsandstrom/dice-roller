@@ -57,10 +57,7 @@ export default function DiceEventView({ diceEvent, participantComplete }: DiceEv
                       setMenuAnchorEl(undefined)
                       setShowMenuIndex(undefined)
                     }}
-                    anchorOrigin={{
-                      vertical: 'center',
-                      horizontal: 'right',
-                    }}
+                    style={{ marginLeft: '20px' }}
                   >
                     <div style={{ padding: '20px', width: '700px' }}>
                       <div className="seed-view-row" style={{ marginBottom: '5px' }}>
